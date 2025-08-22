@@ -42,6 +42,19 @@ func load() Store {
     return s 
 }
 
-const alphabet 
+const alphabet = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"
+
+func toBase62(b []byte) string {
+	n := new(big.Int).SetBytes(b)
+if n.Sign() == 0 {
+	return string(alphabet[0])
+}
+
+var result []byte
+base := big.NewInt(62)
+zero := big.NewInt(0)
+mod := new(big.Int)
+
+
 
 
