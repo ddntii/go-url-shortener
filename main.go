@@ -137,6 +137,56 @@ func main() {
 			return
 		}
 
+		if existing := findExisting(store, targetURL); existing != "" {
+			fmt.Printf("%s (exists)\n", existing)
+			return
+		}
+
+		var code string
+		if len(os.Args) > 3 {
+			
+			code = os.Args[3]
+			if len(code) < 3 || len(code) > 20 {
+				fmt.Printf("Custom code must be 3-20 characters\n")
+				return
+			}
+			if _, exists := store.Items[code]; exists {
+				fmt.Printf("Code '%s' already taken\n", code)
+				return
+			}
+		} else {
+		
+			codeLen := 4
+			if len(store.Items) > 1000 {
+				codeLen = 5
+			}
+			if len(store.Items) > 10000 {
+				codeLen = 6
+			}
+			
+			attempts := 0
+			for {
+				code = genCode(codeLen)
+				if _, exists := store.Items[code]; !exists {
+					break
+				}
+				attempts++
+				if attempts > 10 {
+					codeLen++
+					attempts = 0
+				}
+			}
+		}
+
+		title := fetchTitle(targetURL)
+
+		store.Items[code] = URLEntry{
+			URL:       targetURL,
+			CreatedAt: time.Now(),
+			Clicks:    0,
+			Title:     title,
+		}
+
 
 
 
