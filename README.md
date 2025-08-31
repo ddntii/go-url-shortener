@@ -11,6 +11,7 @@ a simple url shortener for the command line. takes long urls and makes them shor
 - won't make duplicates
 - cleans up old unused links
 - saves everything to a json file
+- customizable settings via config file
 
 ## setup
 
@@ -75,6 +76,22 @@ go build -o urlsh
 - `urlsh clean` - remove old unused urls
 - `urlsh delete <code>` - delete specific url (can also use `del` or `rm`)
 
+## customization
+
+you can customize settings by copying `config.json.example` to `config.json` and editing:
+
+```json
+{
+  "default_code_length": 4,
+  "title_max_length": 60,
+  "cleanup_days": 30
+}
+```
+
+- `default_code_length` - how long new codes should be (default: 4)
+- `title_max_length` - max characters for page titles (default: 60)  
+- `cleanup_days` - how old unused urls should be before cleanup (default: 30)
+
 ## where stuff gets saved
 
 everything goes in `urls.json` and looks like this:
@@ -95,7 +112,7 @@ everything goes in `urls.json` and looks like this:
 ## how the codes work
 
 - uses random letters and numbers (no confusing ones like 0, O, 1, l)
-- starts with 4 character codes
+- starts with 4 character codes (or whatever you set in config)
 - makes them longer if you have lots of urls
 - won't give you the same code twice
 
@@ -103,6 +120,4 @@ everything goes in `urls.json` and looks like this:
 
 - go 1.19 or newer
 
-
-
-## thats it enjoy it ! 
+## thats it enjoy it !
