@@ -1,0 +1,5 @@
+{
+  "default_code_length": 4,
+  "title_max_length": 60,
+  "cleanup_days": 30
+}
