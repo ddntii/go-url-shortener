@@ -5,6 +5,7 @@ go-url-shortener
 
 # Data files
 urls.json
+config.json
 
 # OS files
 .DS_Store
