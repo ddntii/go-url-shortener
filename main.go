@@ -22,6 +22,12 @@ type URLEntry struct {
 	LastClick time.Time `json:"last_click,omitempty"`
 }
 
+type Config struct {
+	DefaultCodeLength int `json:"default_code_length"`
+	TitleMaxLength    int `json:"title_max_length"`
+	CleanupDays       int `json:"cleanup_days"`
+}
+
 type Store struct {
 	Items map[string]URLEntry `json:"items"`
 	Stats struct {
@@ -31,6 +37,26 @@ type Store struct {
 }
 
 const charset = "23456789abcdefghijkmnpqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ"
+
+func loadConfig() Config {
+	defaultConfig := Config{
+		DefaultCodeLength: 4,
+		TitleMaxLength:    60,
+		CleanupDays:       30,
+	}
+	
+	data, err := os.ReadFile("config.json")
+	if err != nil {
+		return defaultConfig
+	}
+	
+	var config Config
+	if json.Unmarshal(data, &config) != nil {
+		return defaultConfig
+	}
+	
+	return config
+}
 
 func genCode(n int) string {
 	b := make([]byte, n)
@@ -71,7 +97,7 @@ func saveDB(s Store) {
 	os.WriteFile("urls.json", data, 0644)
 }
 
-func fetchTitle(rawURL string) string {
+func fetchTitle(rawURL string, config Config) string {
 	client := &http.Client{Timeout: 3 * time.Second}
 	resp, err := client.Get(rawURL)
 	if err != nil {
@@ -86,8 +112,8 @@ func fetchTitle(rawURL string) string {
 	matches := re.FindSubmatch(body[:n])
 	if len(matches) > 1 {
 		title := strings.TrimSpace(string(matches[1]))
-		if len(title) > 60 {
-			title = title[:60] + "..."
+		if len(title) > config.TitleMaxLength {
+			title = title[:config.TitleMaxLength] + "..."
 		}
 		return title
 	}
@@ -122,6 +148,7 @@ func main() {
 
 	cmd := os.Args[1]
 	store := loadDB()
+	config := loadConfig()
 
 	switch cmd {
 	case "shorten", "s":
@@ -155,7 +182,7 @@ func main() {
 			}
 		} else {
 		
-			codeLen := 4
+			codeLen := config.DefaultCodeLength
 			if len(store.Items) > 1000 {
 				codeLen = 5
 			}
@@ -177,7 +204,7 @@ func main() {
 			}
 		}
 
-		title := fetchTitle(targetURL)
+		title := fetchTitle(targetURL, config)
 
 		store.Items[code] = URLEntry{
 			URL:       targetURL,
@@ -291,7 +318,7 @@ func main() {
 			return
 		}
 
-		cutoff := time.Now().AddDate(0, 0, -30)
+		cutoff := time.Now().AddDate(0, 0, -config.CleanupDays)
 		removed := 0
 		
 		for code, entry := range store.Items {
@@ -334,6 +361,3 @@ func main() {
 		fmt.Printf("Available commands: shorten, expand, list, stats, clean, delete\n")
 	}
 }
-
-
-
