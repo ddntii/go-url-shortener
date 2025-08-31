@@ -10,7 +10,6 @@ import (
 	"os"
 	"regexp"
 	"sort"
-	"strconv"
 	"strings"
 	"time"
 )
@@ -206,7 +205,6 @@ func main() {
 			return
 		}
 
-		// Update click count
 		entry.Clicks++
 		entry.LastClick = time.Now()
 		store.Items[code] = entry
@@ -224,7 +222,6 @@ func main() {
 			return
 		}
 
-		// Sort by creation date (newest first)
 		type sortEntry struct {
 			code  string
 			entry URLEntry
@@ -337,7 +334,6 @@ func main() {
 		fmt.Printf("Available commands: shorten, expand, list, stats, clean, delete\n")
 	}
 }
-
 
 
 
