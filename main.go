@@ -169,6 +169,21 @@ func main() {
 	config := loadConfig()
 
 	switch cmd {
+	case "help", "--help", "-h":
+		fmt.Printf("urlsh - URL shortener\n\n")
+		fmt.Printf("Commands:\n")
+		fmt.Printf("  s, shorten <url> [code]  Create short URL\n")
+		fmt.Printf("  e, expand <code>         Get original URL\n")
+		fmt.Printf("  l, list                  Show all URLs\n")
+		fmt.Printf("  stats                    Show statistics\n")
+		fmt.Printf("  clean                    Remove old unused URLs\n")
+		fmt.Printf("  delete <code>            Delete specific URL\n")
+		fmt.Printf("  help                     Show this help\n\n")
+		fmt.Printf("Examples:\n")
+		fmt.Printf("  urlsh s https://example.com\n")
+		fmt.Printf("  urlsh s https://example.com mycode\n")
+		fmt.Printf("  urlsh e abc4\n")
+
 	case "shorten", "s":
 		if len(os.Args) < 3 {
 			fmt.Printf("Usage: urlsh s <url> [custom-code]\n")
@@ -375,7 +390,7 @@ func main() {
 		fmt.Printf("Deleted %s\n", code)
 
 	default:
-		fmt.Printf("Unknown command: %s\n", cmd)
-		fmt.Printf("Available commands: shorten, expand, list, stats, clean, delete\n")
+		fmt.Printf("%sUnknown command: %s%s\n", ColorRed, cmd, ColorReset)
+		fmt.Printf("Run 'urlsh help' for available commands\n")
 	}
 }
