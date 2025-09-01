@@ -38,6 +38,24 @@ type Store struct {
 
 const charset = "23456789abcdefghijkmnpqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ"
 
+const (
+	ColorReset  = "\033[0m"
+	ColorRed    = "\033[31m"
+	ColorGreen  = "\033[32m"
+	ColorYellow = "\033[33m"
+	ColorBlue   = "\033[34m"
+	ColorGray   = "\033[90m"
+)
+
+const (
+	ColorReset  = "\033[0m"
+	ColorRed    = "\033[31m"
+	ColorGreen  = "\033[32m"
+	ColorYellow = "\033[33m"
+	ColorBlue   = "\033[34m"
+	ColorGray   = "\033[37m"
+)
+
 func loadConfig() Config {
 	defaultConfig := Config{
 		DefaultCodeLength: 4,
@@ -159,12 +177,12 @@ func main() {
 		
 		targetURL := os.Args[2]
 		if !validateURL(targetURL) {
-			fmt.Printf("Invalid URL format\n")
+			fmt.Printf("%sInvalid URL format%s\n", ColorRed, ColorReset)
 			return
 		}
 
 		if existing := findExisting(store, targetURL); existing != "" {
-			fmt.Printf("%s (exists)\n", existing)
+			fmt.Printf("%s%s%s %s(exists)%s\n", ColorGreen, existing, ColorReset, ColorGray, ColorReset)
 			return
 		}
 
@@ -177,7 +195,7 @@ func main() {
 				return
 			}
 			if _, exists := store.Items[code]; exists {
-				fmt.Printf("Code '%s' already taken\n", code)
+				fmt.Printf("%sCode '%s' already taken%s\n", ColorRed, code, ColorReset)
 				return
 			}
 		} else {
@@ -214,9 +232,9 @@ func main() {
 		}
 
 		saveDB(store)
-		fmt.Printf("%s\n", code)
+		fmt.Printf("%s%s%s\n", ColorGreen, code, ColorReset)
 		if title != "" {
-			fmt.Printf("Title: %s\n", title)
+			fmt.Printf("%sTitle: %s%s\n", ColorGray, title, ColorReset)
 		}
 
 	case "expand", "e":
@@ -228,7 +246,7 @@ func main() {
 		code := os.Args[2]
 		entry, exists := store.Items[code]
 		if !exists {
-			fmt.Printf("Error: Code '%s' not found\n", code)
+			fmt.Printf("%sError: Code '%s' not found%s\n", ColorRed, code, ColorReset)
 			return
 		}
 
@@ -237,11 +255,11 @@ func main() {
 		store.Items[code] = entry
 		saveDB(store)
 
-		fmt.Printf("%s\n", entry.URL)
+		fmt.Printf("%s%s%s\n", ColorBlue, entry.URL, ColorReset)
 		if entry.Title != "" {
-			fmt.Printf("Title: %s\n", entry.Title)
+			fmt.Printf("%sTitle: %s%s\n", ColorGray, entry.Title, ColorReset)
 		}
-		fmt.Printf("Clicks: %d\n", entry.Clicks)
+		fmt.Printf("%sClicks: %d%s\n", ColorYellow, entry.Clicks, ColorReset)
 
 	case "list", "l":
 		if len(store.Items) == 0 {
@@ -329,7 +347,7 @@ func main() {
 		}
 		
 		saveDB(store)
-		fmt.Printf("Removed %d unused URLs\n", removed)
+		fmt.Printf("%sRemoved %d unused URLs%s\n", ColorYellow, removed, ColorReset)
 
 	case "delete", "del", "rm":
 		if len(os.Args) < 3 {
@@ -340,7 +358,7 @@ func main() {
 		code := os.Args[2]
 		entry, exists := store.Items[code]
 		if !exists {
-			fmt.Printf("Error: Code '%s' not found\n", code)
+			fmt.Printf("%sError: Code '%s' not found%s\n", ColorRed, code, ColorReset)
 			return
 		}
 
