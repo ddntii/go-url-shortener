@@ -47,15 +47,6 @@ const (
 	ColorGray   = "\033[90m"
 )
 
-const (
-	ColorReset  = "\033[0m"
-	ColorRed    = "\033[31m"
-	ColorGreen  = "\033[32m"
-	ColorYellow = "\033[33m"
-	ColorBlue   = "\033[34m"
-	ColorGray   = "\033[37m"
-)
-
 func loadConfig() Config {
 	defaultConfig := Config{
 		DefaultCodeLength: 4,
@@ -183,6 +174,9 @@ func main() {
 		fmt.Printf("  urlsh s https://example.com\n")
 		fmt.Printf("  urlsh s https://example.com mycode\n")
 		fmt.Printf("  urlsh e abc4\n")
+
+	case "version", "--version", "-v":
+		fmt.Printf("urlsh v1.2\n")
 
 	case "shorten", "s":
 		if len(os.Args) < 3 {
